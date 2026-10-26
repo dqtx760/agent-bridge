@@ -1,3 +1,11 @@
+import sys
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+
 import typer
 from typing import Optional
 from rich.console import Console
@@ -64,6 +72,15 @@ def smoke_test():
         topic="为本地拿货价格表建立一个自动化每日报表系统",
         rounds=2
     )
+@app.command("ui")
+def launch_ui(port: int = typer.Option(8765, "--port", "-p", help="工作台服务端口")):
+    """启动浏览器图形化工作台看板 (Visual Workbench)"""
+    import webbrowser
+    from .web import start_workbench
+    console.print(f"[bold green][AgentBridge] 正在启动多智能体可视化工作台: http://127.0.0.1:{port}[/bold green]")
+    console.print("[dim]浏览器将自动打开看板，按 Ctrl+C 可停止服务。[/dim]")
+    webbrowser.open(f"http://127.0.0.1:{port}")
+    start_workbench(port=port)
 
 def main():
     app()
