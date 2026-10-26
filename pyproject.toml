@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-bridge"
+version = "0.1.0"
+description = "Universal Multi-Agent Relay & Autonomous Bridge (Codex, WorkBuddy, Claude Code and CLI Agents)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Derek Zhao (大强同学)" }
+]
+keywords = ["multi-agent", "codex", "workbuddy", "claude-code", "orchestration", "a2a", "acp", "mcp"]
+dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0"
+]
+
+[project.scripts]
+agent-bridge = "agent_bridge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agent_bridge*"]
