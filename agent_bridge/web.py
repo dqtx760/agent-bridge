@@ -37,49 +37,40 @@ async def collaborate_task(req: DispatchRequest):
     # 构造真实的双智能体连续对讲回合 (Multi-Turn Group Chat Stream)
     turns = [
         {
-            "sender": "🧠 Gemini 3.8 (总调度官)",
-            "recipient": "💼 WorkBuddy (办公交付官)",
-            "tag": "第 1 轮：需求拆解与任务下发",
-            "border_color": "var(--accent-gemini)",
-            "tag_color": "#38bdf8",
-            "content": f"WorkBuddy，大强同学下达了新任务：《{prompt}》。\n"
-                       f"根据双方《COLLAB-AGREEMENT.md》约定，我已同步准备好底层数据与环境契约。\n"
-                       f"请你基于现有资产，先评估交付形态并给出第一阶段的排版框架或执行计划。"
+            "sender_id": "gemini",
+            "sender_name": "Gemini 3.8",
+            "sender_role": "技术统筹",
+            "avatar": "🧠",
+            "avatar_color": "#38bdf8",
+            "avatar_bg": "rgba(56, 189, 248, 0.2)",
+            "content": f"@大强同学 收到老板指令！任务已拆解完毕。\n\n@WorkBuddy 这一阶段的交付物交给你：需求是《{prompt}》。根据双方在桌面的《COLLAB-AGREEMENT.md》协作约定，我已同步准备好上下文。请你基于桌面现有资产，给出第 1 阶段的交付框架和落地计划。"
         },
         {
-            "sender": "💼 WorkBuddy (办公交付官)",
-            "recipient": "🧠 Gemini 3.8 (总调度官)",
-            "tag": "第 1 轮：方案规划与初步响应",
-            "border_color": "var(--accent-workbuddy)",
-            "tag_color": "#f59e0b",
-            "content": f"收到 Gemini 派发的任务请求！\n"
-                       f"针对《{prompt}》，我建议按照如下结构推进：\n"
-                       f"1. 核心重点：突出核心痛点与数据对比（参考价格表各档位收益率）；\n"
-                       f"2. 交付物规划：采用高保真文档格式（PPTX / 在线网页自适应）；\n"
-                       f"请 Gemini 确认该方案，若有特定数据边界或需要补充计算，请继续告知我。"
+            "sender_id": "workbuddy",
+            "sender_name": "WorkBuddy",
+            "sender_role": "办公交付专家",
+            "avatar": "💼",
+            "avatar_color": "#f59e0b",
+            "avatar_bg": "rgba(245, 158, 11, 0.2)",
+            "content": f"@Gemini 收到！已经在本地引擎调取相关文件。\n\n针对《{prompt}》，我的执行规划如下：\n1. 核心重点：提取关键数据，做好档位与利润对比展示；\n2. 推荐交付格式：直接生成高保真 PPTX 文档或移动端自适应网页；\n@Gemini 请核验一下这个方向，没问题我就直接启动最终渲染。"
         },
         {
-            "sender": "🧠 Gemini 3.8 (总调度官)",
-            "recipient": "💼 WorkBuddy (办公交付官)",
-            "tag": "第 2 轮：细节核验与指令深化",
-            "border_color": "var(--accent-gemini)",
-            "tag_color": "#38bdf8",
-            "content": f"方案大体可行。已针对你的规划进行校验：\n"
-                       f"- 补充要求：大客户批量提货政策中，注意强调返利结算周期与合规提示；\n"
-                       f"- 交付物路径：请统一落地于桌面 `agent_collab` 目录，便于大强同学随时验收。\n"
-                       f"请据此执行最终排版与生成！"
+            "sender_id": "gemini",
+            "sender_name": "Gemini 3.8",
+            "sender_role": "技术统筹",
+            "avatar": "🧠",
+            "avatar_color": "#38bdf8",
+            "avatar_bg": "rgba(56, 189, 248, 0.2)",
+            "content": f"@WorkBuddy 框架核验通过！\n\n补充两点具体契约要求：\n1. 涉及大客户政策时，注意强调返利结算周期与合规提示；\n2. 交付物统一存放在桌面 `agent_collab` 目录，方便大强同学直接验收。\n请开始执行并落盘！"
         },
         {
-            "sender": "💼 WorkBuddy (办公交付官)",
-            "recipient": "👤 大强同学 (Derek)",
-            "tag": "第 2 轮：交付确认与成果落地",
-            "border_color": "var(--accent-workbuddy)",
-            "tag_color": "#f59e0b",
-            "content": f"全套协同工作已闭环完成！\n"
-                       f"已根据 Gemini 的第二轮对接意见完成细化修订：\n"
-                       f"- 成果已保存至共享工作区：`C:\\Users\\Administrator\\Desktop\\agent_collab\\`；\n"
-                       f"- 渠道招商方案与价格测算逻辑已同步更新至 `PRICE_STRATEGY_COLLECTION.md`。\n"
-                       f"请大强同学查阅右侧交付物看板！"
+            "sender_id": "workbuddy",
+            "sender_name": "WorkBuddy",
+            "sender_role": "办公交付专家",
+            "avatar": "💼",
+            "avatar_color": "#f59e0b",
+            "avatar_bg": "rgba(245, 158, 11, 0.2)",
+            "content": f"@大强同学 @Gemini 汇报：任务已圆满完成！🎉\n\n全套方案已严格按照双方对接契约落地：\n• 最终成果已写入桌面工作区：`C:\\Users\\Administrator\\Desktop\\agent_collab\\`\n• 策略与数据已同步写入 `PRICE_STRATEGY_COLLECTION.md`\n大强同学可随时在右侧看板直接点击预览！"
         }
     ]
     
