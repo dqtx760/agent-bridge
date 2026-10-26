@@ -1,0 +1,49 @@
+# AgentBridge Configuration File (config.example.yaml)
+# 跨智能体全自动协同中继器配置文件
+
+workbench:
+  port: 8765
+  host: "127.0.0.1"
+  auto_open_browser: true
+  shared_workspace: "C:/Users/Administrator/Desktop/agent_collab"
+
+# 智能体适配矩阵 (Agent Fleet)
+agents:
+  # 1. OpenAI Codex CLI
+  codex:
+    enabled: true
+    adapter: "codex"
+    executable_path: "auto"  # "auto" 自动探测系统 PATH 及 AppData 默认路径
+    default_model: "gpt-6-luna"
+    timeout_sec: 60
+
+  # 2. Tencent WorkBuddy (腾讯工作台)
+  workbuddy:
+    enabled: true
+    adapter: "workbuddy"
+    executable_path: "auto"  # "auto" 自动探测安装目录及本地 Gateway
+    gateway_port: 53867
+    protocol: "acp"          # 支持 acp 或 shared_fs
+    workspace_dir: "C:/Users/Administrator/Desktop/agent_collab"
+
+  # 3. Anthropic Claude Code CLI
+  claude:
+    enabled: true
+    adapter: "claude"
+    executable_path: "auto"
+    timeout_sec: 120
+
+  # 4. 豆包 / 远程通用大模型 API (通过标准 OpenAPI 接口接入)
+  doubao_api:
+    enabled: false
+    adapter: "openai_compatible"
+    base_url: "https://ark.cn-beijing.volces.com/api/v3"
+    api_key: "${ARK_API_KEY}"
+    model: "doubao-pro-32k"
+
+# 协同编排策略
+orchestration:
+  default_rounds: 2
+  format: "acp"
+  auto_save_artifacts: true
+  artifacts_dir: "C:/Users/Administrator/Desktop/agent_collab"
