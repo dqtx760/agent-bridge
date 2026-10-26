@@ -60,12 +60,13 @@ class CodexAdapter(BaseAgentAdapter):
             self.executable_path,
             "exec",
             "--skip-git-repo-check",
-            full_prompt
+            "-"
         ]
 
         try:
             res = subprocess.run(
                 cmd,
+                input=full_prompt,
                 capture_output=True,
                 text=True,
                 encoding="utf-8",

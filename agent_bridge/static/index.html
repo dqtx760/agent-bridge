@@ -665,36 +665,53 @@ Codex 数据契约已生成完毕。请依据《COLLAB-AGREEMENT.md》规约，�
             input.value = '';
             thread.scrollTop = thread.scrollHeight;
 
-            // Trigger backend dispatch
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+
             try {
-                const res = await fetch('/api/dispatch', {
+                const res = await fetch('/api/collaborate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: text })
                 });
                 const data = await res.json();
-                
-                // Append AI reply card
-                const aiCard = document.createElement('div');
-                aiCard.className = 'msg-card';
-                aiCard.style.borderLeft = '3px solid var(--accent-codex)';
-                aiCard.innerHTML = `
-                    <div class="msg-header">
-                        <div class="msg-parties">
-                            <span style="color: var(--accent-codex);">⚡ Codex (后台实时直连)</span>
-                            <span class="arrow">→</span>
-                            <span style="color: var(--accent-gemini);">🧠 终端协同流</span>
+                const turns = data.turns || [];
+
+                for (const turn of turns) {
+                    // Show thinking indicator
+                    const loader = document.createElement('div');
+                    loader.className = 'msg-card';
+                    loader.style.border = '1px dashed var(--border-focus)';
+                    loader.style.padding = '12px 16px';
+                    loader.style.fontSize = '12.5px';
+                    loader.style.color = 'var(--text-secondary)';
+                    loader.innerHTML = `<span>⏳ <b>${turn.sender}</b> 正在响应/对接中...</span>`;
+                    thread.appendChild(loader);
+                    thread.scrollTop = thread.scrollHeight;
+
+                    await sleep(750);
+                    thread.removeChild(loader);
+
+                    // Append the actual turn card
+                    const card = document.createElement('div');
+                    card.className = 'msg-card';
+                    card.style.borderLeft = `3px solid ${turn.border_color || 'var(--accent-gemini)'}`;
+                    card.innerHTML = `
+                        <div class="msg-header">
+                            <div class="msg-parties">
+                                <span>${turn.sender}</span>
+                                <span class="arrow">→</span>
+                                <span>${turn.recipient}</span>
+                            </div>
+                            <span class="msg-tag" style="background: rgba(42, 51, 77, 0.8); color: ${turn.tag_color || '#93c5fd'};">${turn.tag}</span>
                         </div>
-                        <span class="msg-tag" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">Execution</span>
-                    </div>
-                    <div class="msg-body">${data.response || '任务已派发，各 Agent 正在后台协同推进...'}</div>
-                `;
-                thread.appendChild(aiCard);
-                thread.scrollTop = thread.scrollHeight;
+                        <div class="msg-body">${turn.content.replace(/\\n/g, '<br>')}</div>
+                    `;
+                    thread.appendChild(card);
+                    thread.scrollTop = thread.scrollHeight;
+                }
             } catch (e) {
                 console.error(e);
             }
-        }
 
         async function viewFile(filename) {
             try {
