@@ -32,20 +32,20 @@
 
 ```mermaid
 flowchart TD
-    User([👤 用户：下达顶层目标]) --> Bridge[🌉 AgentBridge 调度中枢<br/><i>(纯 Python 调度器 / 3人 Web 看板)</i>]
+    User(["👤 用户：下达顶层目标"]) --> Bridge["🌉 AgentBridge 调度中枢<br/>(纯 Python 调度器 / 3人 Web 看板)"]
 
-    subgraph Agents [🤖 本地多智能体协同矩阵]
+    subgraph Agents ["🤖 本地多智能体协同矩阵"]
         direction LR
-        Codex[⚡ OpenAI Codex<br/>核心代码 & 算法]
-        Claude[🧠 终端主控<br/>系统工程 & 架构拆解]
-        WorkBuddy[💼 Tencent WorkBuddy<br/>商业文档 & PPTX 交付]
+        Codex["⚡ OpenAI Codex<br/>核心代码与算法"]
+        Claude["🧠 终端主控<br/>系统工程与架构拆解"]
+        WorkBuddy["💼 Tencent WorkBuddy<br/>商业文档与 PPTX 交付"]
     end
 
-    Bridge -->|1. 无头管道调用| Codex
-    Bridge -->|2. 系统级协同| Claude
-    Bridge -->|3. 真实桌面线程注入| WorkBuddy
+    Bridge -->|"1. 无头管道调用"| Codex
+    Bridge -->|"2. 系统级协同"| Claude
+    Bridge -->|"3. 真实桌面线程注入"| WorkBuddy
 
-    Codex --> Result[📦 最终成果统一落盘<br/>代码仓库 + 商业 PPTX + 桌面文件]
+    Codex --> Result["📦 最终成果统一落盘<br/>代码仓库 + 商业 PPTX + 桌面文件"]
     Claude --> Result
     WorkBuddy --> Result
 ```
