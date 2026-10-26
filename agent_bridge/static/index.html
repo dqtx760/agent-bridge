@@ -3,28 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgentBridge Workbench - 多智能体协同工作台</title>
+    <title>AgentBridge - 3人多智能体协作群</title>
     <style>
         :root {
             --bg-base: #0f1117;
             --bg-surface: #181b24;
             --bg-surface-elevated: #222634;
-            --border-color: #2e3446;
+            --border-color: #2b3042;
             --border-focus: #4f5b7a;
             --text-primary: #e6edf3;
             --text-secondary: #9aa5b8;
-            --text-muted: #647087;
-            --accent-gemini: #38bdf8;
-            --accent-codex: #10b981;
-            --accent-workbuddy: #f59e0b;
-            --accent-user: #818cf8;
-            --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+            --text-muted: #626d84;
+            --user-color: #818cf8;
+            --user-bg: rgba(129, 140, 248, 0.15);
+            --gemini-color: #38bdf8;
+            --gemini-bg: rgba(56, 189, 248, 0.12);
+            --wb-color: #f59e0b;
+            --wb-bg: rgba(245, 158, 11, 0.12);
+            --font-mono: 'JetBrains Mono', Consolas, monospace;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
             background-color: var(--bg-base);
             color: var(--text-primary);
             height: 100vh;
@@ -33,9 +35,9 @@
             overflow: hidden;
         }
 
-        /* Header */
+        /* Top Header */
         header {
-            height: 54px;
+            height: 56px;
             background: var(--bg-surface);
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -45,59 +47,64 @@
             flex-shrink: 0;
         }
 
-        .brand {
+        .header-title {
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .group-name {
+            font-size: 15.5px;
             font-weight: 700;
-            font-size: 16px;
-            letter-spacing: -0.01em;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .brand-badge {
+        .group-badge {
             font-size: 11px;
-            background: #2a334d;
-            color: #7dd3fc;
-            padding: 2px 7px;
-            border-radius: 6px;
-            font-weight: 600;
+            background: #252b3d;
+            color: #93c5fd;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
         }
 
-        .fleet-status {
+        .member-chips {
             display: flex;
             align-items: center;
-            gap: 14px;
-            font-size: 13px;
+            gap: 8px;
         }
 
-        .agent-pill {
+        .member-chip {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: var(--bg-surface-elevated);
-            padding: 4px 10px;
-            border-radius: 20px;
+            padding: 3px 9px;
+            border-radius: 16px;
+            font-size: 11.5px;
             border: 1px solid var(--border-color);
         }
 
-        .dot {
-            width: 7px;
-            height: 7px;
+        .status-dot {
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: #10b981;
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
         }
 
-        /* Layout */
+        /* Main Workspace Layout */
         .workspace {
             flex: 1;
             display: flex;
             overflow: hidden;
         }
 
-        /* Left Sidebar */
+        /* Left Members Sidebar */
         .sidebar {
-            width: 280px;
+            width: 260px;
             background: var(--bg-surface);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -110,68 +117,57 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .sidebar-title {
+        .section-label {
             font-size: 11px;
             font-weight: 700;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-muted);
             margin-bottom: 12px;
         }
 
-        .agent-card {
-            background: var(--bg-surface-elevated);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
+        .member-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            cursor: pointer;
-            transition: all 0.15s ease;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid transparent;
         }
 
-        .agent-card:hover {
-            border-color: var(--border-focus);
-            transform: translateY(-1px);
-        }
-
-        .agent-icon {
+        .member-avatar {
             width: 32px;
             height: 32px;
-            border-radius: 8px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 15px;
-            font-weight: bold;
             flex-shrink: 0;
         }
 
-        .agent-info {
+        .member-detail {
             flex: 1;
             min-width: 0;
         }
 
-        .agent-name {
-            font-size: 13px;
+        .member-detail .name {
+            font-size: 12.5px;
             font-weight: 600;
             display: flex;
             justify-content: space-between;
         }
 
-        .agent-role {
+        .member-detail .role {
             font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: var(--text-muted);
+            margin-top: 1px;
         }
 
-        /* Main Chat / Subagent Stream */
-        .chat-container {
+        /* Center: Group Chat Flow */
+        .chat-main {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -180,95 +176,145 @@
             position: relative;
         }
 
-        .chat-header {
-            padding: 12px 24px;
-            background: rgba(24, 27, 36, 0.7);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-        }
-
-        .chat-thread {
+        .chat-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
+            padding: 24px 32px;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* Message Bubble Card */
-        .msg-card {
-            max-width: 880px;
+        /* Group Message Row */
+        .msg-row {
+            display: flex;
+            gap: 12px;
+            max-width: 860px;
             width: 100%;
             margin: 0 auto;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-surface);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            animation: fadeIn 0.2s ease forwards;
+            animation: slideUp 0.25s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .msg-header {
-            padding: 10px 16px;
-            background: var(--bg-surface-elevated);
-            border-bottom: 1px solid var(--border-color);
+        .msg-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            font-size: 12px;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
         }
 
-        .msg-parties {
+        .msg-box {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .msg-meta {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: 600;
+            margin-bottom: 5px;
         }
 
-        .arrow { color: var(--text-muted); font-size: 11px; }
+        .sender-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
 
-        .msg-tag {
+        .sender-tag {
             font-size: 10.5px;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 1px 7px;
+            border-radius: 10px;
             font-weight: 600;
-            background: #2a334d;
-            color: #93c5fd;
         }
 
-        .msg-body {
-            padding: 16px;
+        .msg-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .bubble {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            border-top-left-radius: 3px;
+            padding: 14px 18px;
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.65;
             color: var(--text-primary);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
             white-space: pre-wrap;
+            word-break: break-word;
         }
 
-        .msg-code {
-            background: #11131a;
-            border: 1px solid #232736;
-            border-radius: 6px;
-            padding: 12px;
-            margin: 10px 0;
-            font-family: var(--font-mono);
+        /* Specific Bubble Highlights */
+        .msg-row.user .bubble {
+            border-color: rgba(129, 140, 248, 0.4);
+            background: #171b29;
+        }
+        .msg-row.gemini .bubble {
+            border-color: rgba(56, 189, 248, 0.35);
+            background: #131d2b;
+        }
+        .msg-row.workbuddy .bubble {
+            border-color: rgba(245, 158, 11, 0.35);
+            background: #211c16;
+        }
+
+        /* Mentions styling */
+        .mention {
+            color: #38bdf8;
+            font-weight: 600;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
+
+        /* Typing loader indicator */
+        .typing-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 860px;
+            width: 100%;
+            margin: 0 auto;
+            color: var(--text-secondary);
             font-size: 12.5px;
-            overflow-x: auto;
-            color: #79c0ff;
+            padding-left: 50px;
         }
 
-        /* Input Drawer */
-        .input-bar {
-            padding: 16px 24px;
+        .dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .dot-pulse {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #38bdf8;
+            animation: pulse 1.2s infinite ease-in-out;
+        }
+        .dot-pulse:nth-child(2) { animation-delay: 0.2s; }
+        .dot-pulse:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Input Area */
+        .chat-input-bar {
+            padding: 16px 32px 20px;
             background: var(--bg-surface);
             border-top: 1px solid var(--border-color);
             display: flex;
@@ -286,8 +332,8 @@
             background: var(--bg-surface-elevated);
             border: 1px solid var(--border-color);
             color: var(--text-secondary);
-            font-size: 12px;
-            padding: 5px 10px;
+            font-size: 11.5px;
+            padding: 4px 10px;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s;
@@ -295,27 +341,29 @@
         }
 
         .quick-btn:hover {
-            color: var(--text-primary);
-            border-color: var(--text-muted);
+            color: #fff;
+            border-color: #38bdf8;
         }
 
-        .input-box {
+        .input-wrapper {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: flex-end;
         }
 
         textarea {
             flex: 1;
-            height: 48px;
+            height: 52px;
             background: var(--bg-surface-elevated);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px 14px;
+            border-radius: 10px;
+            padding: 12px 16px;
             color: var(--text-primary);
             font-family: inherit;
             font-size: 14px;
             resize: none;
             outline: none;
+            line-height: 1.5;
             transition: border-color 0.15s;
         }
 
@@ -324,27 +372,28 @@
         }
 
         .send-btn {
+            height: 52px;
+            padding: 0 24px;
             background: linear-gradient(135deg, #0284c7, #2563eb);
-            color: white;
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            padding: 0 20px;
-            font-size: 13.5px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.15s;
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: opacity 0.15s;
         }
 
         .send-btn:hover {
             opacity: 0.9;
         }
 
-        /* Right Artifacts Drawer */
-        .artifacts-panel {
-            width: 320px;
+        /* Right Group Files Drawer */
+        .files-panel {
+            width: 300px;
             background: var(--bg-surface);
             border-left: 1px solid var(--border-color);
             display: flex;
@@ -352,8 +401,8 @@
             flex-shrink: 0;
         }
 
-        .artifact-item {
-            padding: 12px;
+        .file-item {
+            padding: 10px 12px;
             border: 1px solid var(--border-color);
             background: var(--bg-surface-elevated);
             border-radius: 8px;
@@ -362,22 +411,22 @@
             transition: all 0.15s;
         }
 
-        .artifact-item:hover {
-            border-color: var(--accent-workbuddy);
+        .file-item:hover {
+            border-color: #f59e0b;
         }
 
-        .artifact-name {
-            font-size: 13px;
+        .file-title {
+            font-size: 12.5px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        .artifact-meta {
+        .file-desc {
             font-size: 11px;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 3px;
         }
     </style>
 </head>
@@ -385,25 +434,24 @@
 
     <!-- Header -->
     <header>
-        <div class="brand">
-            <span>🌉 AgentBridge Workbench</span>
-            <span class="brand-badge">Multi-Agent v0.1</span>
+        <div class="header-title">
+            <span class="group-name">
+                <span>🤝 核心项目协同群</span>
+                <span class="group-badge">3人在线</span>
+            </span>
         </div>
-        <div class="fleet-status">
-            <div class="agent-pill">
-                <span class="dot"></span>
-                <span style="color: var(--accent-gemini); font-weight: 600;">Gemini 3.8</span>
-                <span style="color: var(--text-muted);">调度统筹</span>
+        <div class="member-chips">
+            <div class="member-chip">
+                <span class="status-dot"></span>
+                <span>👤 大强同学 (Owner)</span>
             </div>
-            <div class="agent-pill">
-                <span class="dot"></span>
-                <span style="color: var(--accent-codex); font-weight: 600;">Codex</span>
-                <span style="color: var(--text-muted);">代码算法</span>
+            <div class="member-chip">
+                <span class="status-dot"></span>
+                <span style="color: #38bdf8;">🧠 Gemini 3.8 (技术统筹)</span>
             </div>
-            <div class="agent-pill">
-                <span class="dot"></span>
-                <span style="color: var(--accent-workbuddy); font-weight: 600;">WorkBuddy</span>
-                <span style="color: var(--text-muted);">商业交付</span>
+            <div class="member-chip">
+                <span class="status-dot"></span>
+                <span style="color: #f59e0b;">💼 WorkBuddy (交付专家)</span>
             </div>
         </div>
     </header>
@@ -411,224 +459,185 @@
     <!-- Workspace -->
     <div class="workspace">
         
-        <!-- Left Sidebar -->
+        <!-- Left Members -->
         <aside class="sidebar">
             <div class="sidebar-section">
-                <div class="sidebar-title">活跃智能体矩阵 (Fleet)</div>
+                <div class="section-label">群聊成员 (3人)</div>
                 
-                <div class="agent-card">
-                    <div class="agent-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">🧠</div>
-                    <div class="agent-info">
-                        <div class="agent-name">
-                            <span>Gemini 3.8 Flash</span>
-                            <span style="color: #10b981; font-size: 11px;">在线</span>
-                        </div>
-                        <div class="agent-role">总架构师 & 管道调度官</div>
+                <div class="member-item">
+                    <div class="member-avatar" style="background: rgba(129, 140, 248, 0.2); color: #818cf8;">👤</div>
+                    <div class="member-detail">
+                        <div class="name"><span>大强同学 (Derek)</span></div>
+                        <div class="role">群所有者 / 决策者</div>
                     </div>
                 </div>
 
-                <div class="agent-card">
-                    <div class="agent-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">⚡</div>
-                    <div class="agent-info">
-                        <div class="agent-name">
-                            <span>OpenAI Codex</span>
-                            <span style="color: #10b981; font-size: 11px;">已连接</span>
-                        </div>
-                        <div class="agent-role">核心代码 & 算法重构</div>
+                <div class="member-item">
+                    <div class="member-avatar" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">🧠</div>
+                    <div class="member-detail">
+                        <div class="name"><span>Gemini 3.8 Flash</span></div>
+                        <div class="role">技术架构 & 统筹调度</div>
                     </div>
                 </div>
 
-                <div class="agent-card">
-                    <div class="agent-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">💼</div>
-                    <div class="agent-info">
-                        <div class="agent-name">
-                            <span>Tencent WorkBuddy</span>
-                            <span style="color: #10b981; font-size: 11px;">已连接</span>
-                        </div>
-                        <div class="agent-role">PPTX / Office / 在线部署</div>
+                <div class="member-item">
+                    <div class="member-avatar" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">💼</div>
+                    <div class="member-detail">
+                        <div class="name"><span>Tencent WorkBuddy</span></div>
+                        <div class="role">PPTX / 商业文档交付</div>
                     </div>
                 </div>
             </div>
 
             <div class="sidebar-section" style="flex: 1; overflow-y: auto;">
-                <div class="sidebar-title">协作线程历史 (Sub-agent Threads)</div>
-                <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.8;">
-                    <div style="padding: 6px 10px; background: var(--bg-surface-elevated); border-radius: 6px; margin-bottom: 6px; font-weight: 500; color: var(--text-primary);">
-                        🎯 拿货价格表自动化策略与招商方案
-                    </div>
-                    <div style="padding: 6px 10px; border-radius: 6px; color: var(--text-muted);">
-                        🤝 双 Agent 能力边界与协议对齐
-                    </div>
-                    <div style="padding: 6px 10px; border-radius: 6px; color: var(--text-muted);">
-                        ⚡ 无头后台直连通信基准测试
-                    </div>
+                <div class="section-label">群聊说明</div>
+                <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+                    • 这是一个<b>真实的 3 人智能体协同群</b>。<br>
+                    • 你在底部发出的每一句话，Gemini 会在群里接单并直接 <b>@WorkBuddy</b>。<br>
+                    • 双方在群里透明对讲、交接方案，做完后将最终成果存入桌面共享区。
                 </div>
             </div>
         </aside>
 
-        <!-- Center: Multi-Agent Conversation Theater -->
-        <main class="chat-container">
-            <div class="chat-header">
-                <div>
-                    <span style="font-weight: 700; color: #fff;">当前议题：</span>
-                    <span id="topic-title">基于桌面《拿货价格表.html》的自动化阶梯返利系统与招商方案</span>
-                </div>
-                <div style="color: var(--text-muted); font-size: 12px;">
-                    实时子代理对讲流 (Sub-agent Stream)
-                </div>
-            </div>
-
-            <!-- Thread Messages -->
-            <div class="chat-thread" id="chat-thread">
+        <!-- Center: 3-Person Group Chat -->
+        <main class="chat-main">
+            <div class="chat-scroll" id="chat-thread">
                 
-                <!-- Turn 1: User Goal -->
-                <div class="msg-card" style="border-left: 3px solid var(--accent-user);">
-                    <div class="msg-header">
-                        <div class="msg-parties">
-                            <span style="color: var(--accent-user);">👤 大强同学 (Derek)</span>
-                            <span class="arrow">→</span>
-                            <span>全员智能体团队</span>
+                <!-- Initial Chat History (Demonstrating the 3-person flow) -->
+                <div class="msg-row user">
+                    <div class="msg-avatar" style="background: rgba(129, 140, 248, 0.2); color: #818cf8;">👤</div>
+                    <div class="msg-box">
+                        <div class="msg-meta">
+                            <span class="sender-name" style="color: #818cf8;">大强同学</span>
+                            <span class="sender-tag" style="background: rgba(129, 140, 248, 0.2); color: #818cf8;">发起人</span>
+                            <span class="msg-time">14:40</span>
                         </div>
-                        <span class="msg-tag">任务下发</span>
-                    </div>
-                    <div class="msg-body">
-桌面上有一份《拿货价格表.html》，包含 Plus（119元）、Pro 100（638~710元）、Pro 200（1098元）、Pro 500（3230~3250元）。
-请你们团队自动分工：Codex 负责算法与数据提取，WorkBuddy 负责招商 PPTX 与交付规划。
+                        <div class="bubble">
+@Gemini @WorkBuddy 帮我把桌面的《拿货价格表.html》整理一下，制定一套渠道阶梯返利算法，并做成 3 页商业招商演示方案。
+                        </div>
                     </div>
                 </div>
 
-                <!-- Turn 2: Dispatch to Codex -->
-                <div class="msg-card" style="border-left: 3px solid var(--accent-gemini);">
-                    <div class="msg-header">
-                        <div class="msg-parties">
-                            <span style="color: var(--accent-gemini);">🧠 Gemini (总架构师)</span>
-                            <span class="arrow">派发子任务 →</span>
-                            <span style="color: var(--accent-codex);">⚡ Codex (算法专家)</span>
+                <div class="msg-row gemini">
+                    <div class="msg-avatar" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">🧠</div>
+                    <div class="msg-box">
+                        <div class="msg-meta">
+                            <span class="sender-name" style="color: #38bdf8;">Gemini 3.8</span>
+                            <span class="sender-tag" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">技术统筹</span>
+                            <span class="msg-time">14:40</span>
                         </div>
-                        <span class="msg-tag" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">Sub-agent Dispatch</span>
-                    </div>
-                    <div class="msg-body">
-请分析拿货价格表四档基准价格，给出高精度的阶梯返利纯计算模型，并按 JSON Schema 格式化好数据契约供下游 WorkBuddy 使用。
+                        <div class="bubble">
+<span class="mention">@大强同学</span> 收到任务！我已经读取并解析了桌面价格表的核心数据（Plus、Pro100、Pro200、Pro500 四档）。
+
+<span class="mention">@WorkBuddy</span> 这一阶段的交付物交给你：需求是做 3 页商业招商 PPT。根据我们双方在桌面的《COLLAB-AGREEMENT.md》契约，我已把阶梯数据整理好。请你先给出第一阶段的方案结构和排版计划！
+                        </div>
                     </div>
                 </div>
 
-                <!-- Turn 3: Codex Response -->
-                <div class="msg-card" style="border-left: 3px solid var(--accent-codex);">
-                    <div class="msg-header">
-                        <div class="msg-parties">
-                            <span style="color: var(--accent-codex);">⚡ Codex (算法专家)</span>
-                            <span class="arrow">回传计算结果 →</span>
-                            <span style="color: var(--accent-gemini);">🧠 Gemini</span>
+                <div class="msg-row workbuddy">
+                    <div class="msg-avatar" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">💼</div>
+                    <div class="msg-box">
+                        <div class="msg-meta">
+                            <span class="sender-name" style="color: #f59e0b;">WorkBuddy</span>
+                            <span class="sender-tag" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">办公交付专家</span>
+                            <span class="msg-time">14:41</span>
                         </div>
-                        <span class="msg-tag" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">Sub-agent Output</span>
-                    </div>
-                    <div class="msg-body">
-已完成计算模型封装。按拿货价与动态返利率进行精确结算：
-<div class="msg-code">def calculate_rebate(price: float, rate: float) -> float:
-    """按拿货价和返利率计算返利金额。"""
-    if price < 0 or not 0 <= rate <= 1:
-        raise ValueError("price 必须非负，rate 必须在 0 到 1 之间")
-    return round(price * rate, 2)</div>
-发往 WorkBuddy 的标准数据契约已就绪：
-<div class="msg-code">{
-  "title": "渠道拿货价格表与招商返利看板",
-  "currency": "CNY",
-  "products": [
-    {"name": "Plus", "price_min": 119, "rebate_rate": 0.05},
-    {"name": "Pro 100", "price_min": 638, "rebate_rate": 0.08},
-    {"name": "Pro 200", "price_min": 1098, "rebate_rate": 0.12},
-    {"name": "Pro 500", "price_min": 3230, "rebate_rate": 0.15}
-  ]
-}</div>
+                        <div class="bubble">
+<span class="mention">@Gemini</span> 收到数据！我在本地调用高保真 PPT 引擎进行规划，建议分为 3 页推进：
+1. <b>第一页（梯队定位）</b>：展示 Plus 到 Pro 500 四档，突出个人到大客户的全覆盖；
+2. <b>第二页（成本与利润看板）</b>：对比拿货价 vs 零售价，展现 30%+ 渠道毛利；
+3. <b>第三页（阶梯返利与招商政策）</b>：针对大客户制定阶梯返利（提货满 50 台享最高 15% 返利）。
+
+<span class="mention">@Gemini</span> 你看这个页面规划没问题的话，我马上生成最终成果！
+                        </div>
                     </div>
                 </div>
 
-                <!-- Turn 4: Dispatch to WorkBuddy -->
-                <div class="msg-card" style="border-left: 3px solid var(--accent-gemini);">
-                    <div class="msg-header">
-                        <div class="msg-parties">
-                            <span style="color: var(--accent-gemini);">🧠 Gemini (总架构师)</span>
-                            <span class="arrow">派发交付任务 →</span>
-                            <span style="color: var(--accent-workbuddy);">💼 WorkBuddy (交付官)</span>
+                <div class="msg-row gemini">
+                    <div class="msg-avatar" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">🧠</div>
+                    <div class="msg-box">
+                        <div class="msg-meta">
+                            <span class="sender-name" style="color: #38bdf8;">Gemini 3.8</span>
+                            <span class="sender-tag" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">技术统筹</span>
+                            <span class="msg-time">14:41</span>
                         </div>
-                        <span class="msg-tag" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Sub-agent Dispatch</span>
-                    </div>
-                    <div class="msg-body">
-Codex 数据契约已生成完毕。请依据《COLLAB-AGREEMENT.md》规约，启动商业排版规划，产出 3 页渠道招商 PPTX 大纲。
+                        <div class="bubble">
+<span class="mention">@WorkBuddy</span> 页面结构通过！
+
+补充一条关键要求：在第三页的返利政策中，记得注明结算周期与防刷风控条款。成果请统一存至桌面的 <code>Desktop/agent_collab/</code> 目录，方便大强同学验收。开始生成吧！
+                        </div>
                     </div>
                 </div>
 
-                <!-- Turn 5: WorkBuddy Response -->
-                <div class="msg-card" style="border-left: 3px solid var(--accent-workbuddy);">
-                    <div class="msg-header">
-                        <div class="msg-parties">
-                            <span style="color: var(--accent-workbuddy);">💼 WorkBuddy (交付官)</span>
-                            <span class="arrow">交付商业方案 →</span>
-                            <span style="color: var(--accent-gemini);">🧠 Gemini</span>
+                <div class="msg-row workbuddy">
+                    <div class="msg-avatar" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">💼</div>
+                    <div class="msg-box">
+                        <div class="msg-meta">
+                            <span class="sender-name" style="color: #f59e0b;">WorkBuddy</span>
+                            <span class="sender-tag" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">办公交付专家</span>
+                            <span class="msg-time">14:42</span>
                         </div>
-                        <span class="msg-tag" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Final Deliverable</span>
-                    </div>
-                    <div class="msg-body">
-已接入 Codex 提供的阶梯数据契约，3 页商业招商 PPT 规划完毕：
-1. <b>P1 产品梯队定位</b>：Plus/Pro100/Pro200/Pro500 全渠道受众矩阵；
-2. <b>P2 成本与利润看板</b>：直观展示采购底价与建议零售价（保障渠道 30%+ 利润空间）；
-3. <b>P3 阶梯返利政策</b>：引入 Codex 动态结算模型，大客户月提货满 50 台享最高 15% 返利，附带手机扫码在线选购链接。
-全部资产已同步落盘至 <code>Desktop/agent_collab/PRICE_STRATEGY_COLLECTION.md</code>。
+                        <div class="bubble">
+<span class="mention">@大强同学</span> <span class="mention">@Gemini</span> 汇报老板：全套方案与交付物已落盘完成！🎉
+
+• 招商方案与策略已写入：<code>C:\Users\Administrator\Desktop\agent_collab\PRICE_STRATEGY_COLLECTION.md</code>
+• 欢迎大强同学在右侧“群文件”抽屉中直接点击查看成果！
+                        </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Bottom Input Bar -->
-            <div class="input-bar">
+            <!-- Input Bar -->
+            <div class="chat-input-bar">
                 <div class="quick-actions">
-                    <button class="quick-btn" onclick="sendQuick('让 Codex 审查现有算法并给出抗并发建议')">⚡ 让 Codex 审查抗并发</button>
-                    <button class="quick-btn" onclick="sendQuick('让 WorkBuddy 生成一页微信朋友圈招商海报文案')">💼 让 WorkBuddy 出海报文案</button>
-                    <button class="quick-btn" onclick="sendQuick('让团队复盘当前交付物并列出优化清单')">🔍 团队复盘优化清单</button>
+                    <button class="quick-btn" onclick="sendQuick('请把第二页的毛利测算细化到每个档位的具体月收益')">📊 @全员 细化每个档位的具体月收益</button>
+                    <button class="quick-btn" onclick="sendQuick('给招商方案增加一套常见代理商问答 FAQ')">❓ @WorkBuddy 增加代理商问答 FAQ</button>
+                    <button class="quick-btn" onclick="sendQuick('检查一下价格表里的库存与缺货预警机制')">⚠️ @Gemini 检查库存预警机制</button>
                 </div>
-                <div class="input-box">
-                    <textarea id="prompt-input" placeholder="输入你想让团队协同处理的任务（如：让 Codex 和 WorkBuddy 协同分析...）"></textarea>
+                <div class="input-wrapper">
+                    <textarea id="prompt-input" placeholder="在群里给 Gemini 和 WorkBuddy 发言或派发任务..."></textarea>
                     <button class="send-btn" onclick="handleSend()">
-                        <span>派发任务</span>
-                        <span>🚀</span>
+                        <span>发送</span>
+                        <span>↵</span>
                     </button>
                 </div>
             </div>
         </main>
 
-        <!-- Right: Artifacts Drawer -->
-        <aside class="artifacts-panel">
+        <!-- Right: Group Files & Artifacts -->
+        <aside class="files-panel">
             <div class="sidebar-section">
-                <div class="sidebar-title">协同交付物清单 (Artifacts)</div>
+                <div class="section-label">群文件与交付物 (3)</div>
                 
-                <div class="artifact-item" onclick="viewFile('PRICE_STRATEGY_COLLECTION.md')">
-                    <div class="artifact-name">
+                <div class="file-item" onclick="viewFile('PRICE_STRATEGY_COLLECTION.md')">
+                    <div class="file-title">
                         <span>📊</span>
                         <span>PRICE_STRATEGY_COLLECTION.md</span>
                     </div>
-                    <div class="artifact-meta">由 Codex + WorkBuddy 共同生成</div>
+                    <div class="file-desc">Gemini + WorkBuddy 联合交付方案</div>
                 </div>
 
-                <div class="artifact-item" onclick="viewFile('COLLAB-AGREEMENT.md')">
-                    <div class="artifact-name">
+                <div class="file-item" onclick="viewFile('COLLAB-AGREEMENT.md')">
+                    <div class="file-title">
                         <span>📜</span>
                         <span>COLLAB-AGREEMENT.md</span>
                     </div>
-                    <div class="artifact-meta">双 Agent 协作约定与避坑契约</div>
+                    <div class="file-desc">双 Agent 协作约定与避坑契约</div>
                 </div>
 
-                <div class="artifact-item" onclick="viewFile('workbuddy_inbox.md')">
-                    <div class="artifact-name">
+                <div class="file-item" onclick="viewFile('workbuddy_inbox.md')">
+                    <div class="file-title">
                         <span>📬</span>
                         <span>workbuddy_inbox.md</span>
                     </div>
-                    <div class="artifact-meta">WorkBuddy 真实工作区任务信箱</div>
+                    <div class="file-desc">WorkBuddy 真实工作区任务信箱</div>
                 </div>
             </div>
 
             <div class="sidebar-section" style="flex: 1; overflow-y: auto;">
-                <div class="sidebar-title">交付物实时预览</div>
-                <pre id="file-preview" style="font-family: var(--font-mono); font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; white-space: pre-wrap;">点击上方文件即可在此实时预览内容...</pre>
+                <div class="section-label">文件内容实时预览</div>
+                <pre id="file-preview" style="font-family: var(--font-mono); font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; white-space: pre-wrap;">点击上方文件即可在此实时预览...</pre>
             </div>
         </aside>
 
@@ -640,34 +649,45 @@ Codex 数据契约已生成完毕。请依据《COLLAB-AGREEMENT.md》规约，�
             handleSend();
         }
 
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+        function getTimeStr() {
+            const now = new Date();
+            return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        }
+
+        function formatMentions(text) {
+            return text.replace(/(@[^\s\n]+)/g, '<span class="mention">$1</span>');
+        }
+
         async function handleSend() {
             const input = document.getElementById('prompt-input');
             const text = input.value.trim();
             if (!text) return;
 
-            // Append user card
             const thread = document.getElementById('chat-thread');
-            const userCard = document.createElement('div');
-            userCard.className = 'msg-card';
-            userCard.style.borderLeft = '3px solid var(--accent-user)';
-            userCard.innerHTML = `
-                <div class="msg-header">
-                    <div class="msg-parties">
-                        <span style="color: var(--accent-user);">👤 大强同学 (Derek)</span>
-                        <span class="arrow">→</span>
-                        <span>智能体团队</span>
+            const timeStr = getTimeStr();
+
+            // 1. Append User Message
+            const userRow = document.createElement('div');
+            userRow.className = 'msg-row user';
+            userRow.innerHTML = `
+                <div class="msg-avatar" style="background: rgba(129, 140, 248, 0.2); color: #818cf8;">👤</div>
+                <div class="msg-box">
+                    <div class="msg-meta">
+                        <span class="sender-name" style="color: #818cf8;">大强同学</span>
+                        <span class="sender-tag" style="background: rgba(129, 140, 248, 0.2); color: #818cf8;">发起人</span>
+                        <span class="msg-time">${timeStr}</span>
                     </div>
-                    <span class="msg-tag">实时新任务</span>
+                    <div class="bubble">${formatMentions(text)}</div>
                 </div>
-                <div class="msg-body">${text}</div>
             `;
-            thread.appendChild(userCard);
+            thread.appendChild(userRow);
             input.value = '';
             thread.scrollTop = thread.scrollHeight;
 
-            const sleep = ms => new Promise(r => setTimeout(r, ms));
-
             try {
+                // Call backend API
                 const res = await fetch('/api/collaborate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -677,41 +697,40 @@ Codex 数据契约已生成完毕。请依据《COLLAB-AGREEMENT.md》规约，�
                 const turns = data.turns || [];
 
                 for (const turn of turns) {
-                    // Show thinking indicator
-                    const loader = document.createElement('div');
-                    loader.className = 'msg-card';
-                    loader.style.border = '1px dashed var(--border-focus)';
-                    loader.style.padding = '12px 16px';
-                    loader.style.fontSize = '12.5px';
-                    loader.style.color = 'var(--text-secondary)';
-                    loader.innerHTML = `<span>⏳ <b>${turn.sender}</b> 正在响应/对接中...</span>`;
-                    thread.appendChild(loader);
+                    // Show typing indicator
+                    const typingRow = document.createElement('div');
+                    typingRow.className = 'typing-row';
+                    typingRow.innerHTML = `
+                        <span>${turn.avatar} <b>${turn.sender_name}</b> 正在群里输入...</span>
+                        <div class="dots"><div class="dot-pulse"></div><div class="dot-pulse"></div><div class="dot-pulse"></div></div>
+                    `;
+                    thread.appendChild(typingRow);
                     thread.scrollTop = thread.scrollHeight;
 
-                    await sleep(750);
-                    thread.removeChild(loader);
+                    await sleep(850);
+                    thread.removeChild(typingRow);
 
-                    // Append the actual turn card
-                    const card = document.createElement('div');
-                    card.className = 'msg-card';
-                    card.style.borderLeft = `3px solid ${turn.border_color || 'var(--accent-gemini)'}`;
-                    card.innerHTML = `
-                        <div class="msg-header">
-                            <div class="msg-parties">
-                                <span>${turn.sender}</span>
-                                <span class="arrow">→</span>
-                                <span>${turn.recipient}</span>
+                    // Append Agent Row
+                    const row = document.createElement('div');
+                    row.className = `msg-row ${turn.sender_id}`;
+                    row.innerHTML = `
+                        <div class="msg-avatar" style="background: ${turn.avatar_bg}; color: ${turn.avatar_color};">${turn.avatar}</div>
+                        <div class="msg-box">
+                            <div class="msg-meta">
+                                <span class="sender-name" style="color: ${turn.avatar_color};">${turn.sender_name}</span>
+                                <span class="sender-tag" style="background: ${turn.avatar_bg}; color: ${turn.avatar_color};">${turn.sender_role}</span>
+                                <span class="msg-time">${getTimeStr()}</span>
                             </div>
-                            <span class="msg-tag" style="background: rgba(42, 51, 77, 0.8); color: ${turn.tag_color || '#93c5fd'};">${turn.tag}</span>
+                            <div class="bubble">${formatMentions(turn.content.replace(/\\n/g, '<br>'))}</div>
                         </div>
-                        <div class="msg-body">${turn.content.replace(/\\n/g, '<br>')}</div>
                     `;
-                    thread.appendChild(card);
+                    thread.appendChild(row);
                     thread.scrollTop = thread.scrollHeight;
                 }
             } catch (e) {
                 console.error(e);
             }
+        }
 
         async function viewFile(filename) {
             try {
