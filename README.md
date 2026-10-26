@@ -123,6 +123,35 @@ python -m agent_bridge.cli chat --agent1 codex --agent2 workbuddy --topic "设�
 
 ---
 
+## 🎯 智能体底层模型调用机制（具体调用的是哪个模型？）
+
+很多开发者最关心的问题：**“当我触发调用时，它们背后到底是在跑哪一个具体模型？能不能指定？如果 WorkBuddy 默认是 DeepSeek 该怎么办？”**
+
+AgentBridge 采用了一套清晰的**分层模型解析机制**：
+
+| 目标智能体 | 默认调用的具体模型 | 如何修改 / 指定其他模型 |
+| :--- | :--- | :--- |
+| **OpenAI Codex** | **自动读取 `~/.codex/config.toml`** 中的 `model` 字段（如 `gpt-6-luna`） | 1. 命令行传参：`--codex-model gpt-6.1-sol`<br>2. 配置文件：修改 `config.yaml` 的 `default_model`<br>3. 直接修改本机的 `~/.codex/config.toml` |
+| **腾讯 WorkBuddy** | **自动跟随客户端当前激活的默认模型**（当前选 H3 则跑 H3，选 DeepSeek 则跑 DeepSeek） | 1. 在 WorkBuddy 桌面端直接切换默认模型<br>2. 在派发 Prompt 时显式声明（如“让 WorkBuddy 用 DeepSeek 跑...”） |
+| **远程 API / 豆包** | **读取 `config.yaml`** 中配置的 `model`（如 `doubao-pro-32k`） | 在 `config.yaml` 的 `agents.doubao_api.model` 中自由修改为任意模型 ID |
+
+### 1. Codex 的模型绑定逻辑
+Codex 客户端本质上是由本机的 `~/.codex/config.toml` 统一配置的：
+- **默认无感模式**：AgentBridge 会直接尊重你在 Codex 里配置的系统偏好（例如 `model = "gpt-6-luna"`、`model_reasoning_effort = "high"`），无需重复配 key；
+- **动态覆盖模式**：如果你想临时换模型（如 `gpt-6.1-sol`、`o3-mini`），直接在命令行或配置中指定：
+  ```bash
+  python -m agent_bridge.cli chat --agent1 codex --codex-model gpt-6.1-sol --topic "重构算法"
+  ```
+
+### 2. WorkBuddy 的模型绑定逻辑（如果默认是 DeepSeek？）
+WorkBuddy 客户端支持腾讯混元 `hy3`、`hy4`，也支持通过插件连接的 `DeepSeek` 等模型：
+- **默认继承规则**：当 AgentBridge 注入新工单线程时，WorkBuddy 客户端会**自动继承你当前界面正在生效的默认模型**：
+  - 如果你当前界面选的是免费的 **H3 (hy3)**，新工单线程就自动以 **H3** 运行；
+  - 如果你在 WorkBuddy 里切换成了 **DeepSeek**，新工单线程就会**立刻自动使用 DeepSeek 引擎进行运算**！
+- **无需手动重配**：你不需要在代码里为 WorkBuddy 重新配置复杂的 API Key，客户端当前选谁，新派发的工单就由谁来接手，既灵活又直观！
+
+---
+
 ## 🚀 极速安装与部署
 
 ```bash
