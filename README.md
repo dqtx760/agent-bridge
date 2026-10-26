@@ -66,7 +66,7 @@ flowchart TD
 ### 1. 安装依赖
 
 ```bash
-git clone https://github.com/your-username/agent-bridge.git
+git clone https://github.com/dqtx760/agent-bridge.git
 cd agent-bridge
 pip install -r requirements.txt
 ```
