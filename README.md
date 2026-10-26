@@ -32,15 +32,22 @@
 
 ```mermaid
 flowchart TD
-    User([用户：下达顶层目标]) --> Bridge[AgentBridge 调度中继器]
+    User([👤 用户：下达顶层目标]) --> Bridge[🌉 AgentBridge 调度中枢<br/><i>(纯 Python 调度器 / 3人 Web 看板)</i>]
 
-    subgraph 自动对话与协作总线
-        Bridge <-->|ACP 协议 / 进程管道| Codex[OpenAI Codex<br/>核心代码 & 算法]
-        Bridge <-->|ACP 协议 / 真实 FS| WorkBuddy[Tencent WorkBuddy<br/>PPTX / 交付物 / 部署]
-        Bridge <-->|ACP 协议 / 终端 stdio| Claude[Claude Code<br/>系统工程 & 运维]
+    subgraph Agents [🤖 本地多智能体协同矩阵]
+        direction LR
+        Codex[⚡ OpenAI Codex<br/>核心代码 & 算法]
+        Claude[🧠 终端主控<br/>系统工程 & 架构拆解]
+        WorkBuddy[💼 Tencent WorkBuddy<br/>商业文档 & PPTX 交付]
     end
 
-    Bridge --> Result[最终交付物: 代码仓库 + 商业 PPTX + 在线链接]
+    Bridge -->|1. 无头管道调用| Codex
+    Bridge -->|2. 系统级协同| Claude
+    Bridge -->|3. 真实桌面线程注入| WorkBuddy
+
+    Codex --> Result[📦 最终成果统一落盘<br/>代码仓库 + 商业 PPTX + 桌面文件]
+    Claude --> Result
+    WorkBuddy --> Result
 ```
 
 ---
