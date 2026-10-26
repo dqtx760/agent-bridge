@@ -13,9 +13,10 @@ class CodexAdapter(BaseAgentAdapter):
         os.path.expanduser(r"~\AppData\Local\Programs\OpenAI\Codex\bin\codex.EXE")
     ]
 
-    def __init__(self, name: str = "Codex", executable_path: Optional[str] = None):
+    def __init__(self, name: str = "Codex", executable_path: Optional[str] = None, model: Optional[str] = None):
         super().__init__(name, "OpenAI Codex CLI - Engineering & Algorithm Specialist")
         self.executable_path = executable_path or self._resolve_executable()
+        self.model = model
 
     def _resolve_executable(self) -> Optional[str]:
         # Check explicit paths first
@@ -60,8 +61,11 @@ class CodexAdapter(BaseAgentAdapter):
             self.executable_path,
             "exec",
             "--skip-git-repo-check",
-            "-"
         ]
+        target_model = kwargs.get("model") or self.model
+        if target_model:
+            cmd.extend(["-m", target_model])
+        cmd.append("-")
 
         try:
             res = subprocess.run(
